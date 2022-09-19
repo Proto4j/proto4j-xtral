@@ -73,7 +73,7 @@ public class LocalHostClient implements XTralConfigurationFactory<LocalHostClien
 ````
 
 In order to react to messages that should be sent and messages that have been received, `Agent` classes have to be defined. They
-consists of methods that should react as a handler:
+consist of methods that should react as a handler:
 
 ````java
 package src.localhost.client.handler; // note the sub-package here 
