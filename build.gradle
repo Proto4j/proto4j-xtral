@@ -1,0 +1,93 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'signing'
+}
+
+group = "io.github.proto4j"
+archivesBaseName = "proto4j-xtral"
+version = "0.0.1"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+//    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.8.1'
+//    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+//    useJUnitPlatform()
+}
+
+java {
+    withSourcesJar()
+    withJavadocJar()
+}
+
+publishing {
+    repositories {
+        maven {
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            credentials {
+                username = ossrhUsername
+                password = ossrhPassword
+            }
+
+        }
+
+//        maven {
+//            name = "GitHubPackages"
+//            url = uri("https://maven.pkg.github.com/proto4j/proto4j-xtral")
+//            credentials {
+//                username = project.findProperty("p4j.user")
+//                password = project.findProperty("p4j.xtral.key")
+//            }
+//        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifactId = 'proto4j-xtral'
+            groupId = 'io.github.proto4j'
+            version = '0.0.1'
+
+            pom {
+                name = 'Proto4j-XTral'
+                packaging = 'jar'
+                artifactId = 'proto4j-xtral'
+                groupId = 'io.github.proto4j'
+                description = 'Client-server infrastructure controlled by Java-Annotations.'
+                url = 'https://github.com/Proto4j/proto4j-xtral'
+
+                scm {
+                    connection = 'scm:git:https://github.com/Proto4j/proto4j-xtral'
+                    developerConnection ='scm:git:https://github.com/Proto4j/proto4j-xtral'
+                    url = 'https://github.com/Proto4j/proto4j-xtral'
+                }
+
+                licenses {
+                    license {
+                        name = 'MIT'
+                        url = 'https://spdx.org/licenses/MIT.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'Proto4j-Group'
+                        name = 'Proto4j'
+                        email = 'not@supported.com'
+                    }
+                }
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
