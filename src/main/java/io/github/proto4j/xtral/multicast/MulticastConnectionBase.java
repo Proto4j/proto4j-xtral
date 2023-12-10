@@ -1,0 +1,89 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Proto4j-Group
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
+package io.github.proto4j.xtral.multicast; //@date 18.09.2022
+
+import io.github.proto4j.xtral.io.ConnectionBase;
+
+import java.io.IOException;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
+import java.util.Objects;
+
+/**
+ * The base class for connections that use {@link MulticastSocket}s.
+ *
+ * @see MulticastChannel
+ */
+public abstract class MulticastConnectionBase extends ConnectionBase<MulticastSocket> {
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public synchronized MulticastChannel getChannel() {
+        return (MulticastChannel) super.getChannel();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @param address {@inheritDoc}
+     * @param port {@inheritDoc}
+     * @throws IOException {@inheritDoc}
+     */
+    @Override
+    public synchronized void doConnect(InetAddress address, int port)
+            throws IOException {
+        Objects.requireNonNull(getConfiguration());
+        Objects.requireNonNull(getChannelFactory());
+        if (!initialized || !closed) {
+            throw new IOException("Connection not initialized!");
+        }
+
+        DatagramSocketFactory dtFactory = getConfiguration().getDatagramFactory();
+        if (dtFactory == null) {
+            throw new IllegalArgumentException("DTFactory == null");
+        }
+        DatagramSocket socket = dtFactory.createSocket(address, port);
+        if (!(socket instanceof MulticastSocket)) {
+            throw new IOException("Invalid Datagram class: " + socket.getClass().getName());
+        }
+        setSocket((MulticastSocket) socket);
+        setChannel();
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @return {@inheritDoc}
+     */
+    @Override
+    public XTralMulticastConfiguration<?> getConfiguration() {
+        return (XTralMulticastConfiguration<?>) super.getConfiguration();
+    }
+}
